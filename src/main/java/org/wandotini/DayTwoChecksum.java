@@ -19,14 +19,28 @@ public class DayTwoChecksum {
     }
 
     private static int getMaxDifference(List<Integer> numbers) {
-        int min = numbers.get(0);
-        int max = numbers.get(0);
-        for (Integer number : numbers) {
+        final MinMax minMax = new MinMax(numbers.get(0));
+        numbers.forEach(minMax::consider);
+        return minMax.difference();
+    }
+
+    private static class MinMax {
+        private int min;
+        private int max;
+
+        MinMax(int base) {
+            max = min = base;
+        }
+
+        void consider(Integer number) {
             if (number > max)
                 max = number;
             if (number < min)
                 min = number;
         }
-        return max - min;
+
+        private int difference() {
+            return max - min;
+        }
     }
 }
