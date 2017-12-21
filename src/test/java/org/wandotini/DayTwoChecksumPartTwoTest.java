@@ -1,11 +1,9 @@
 package org.wandotini;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-import static org.wandotini.DayTwoChecksumPartTwo.calcChecksum;
+import static org.junit.Assert.assertThat;
 
 public class DayTwoChecksumPartTwoTest {
 
@@ -54,6 +52,6 @@ public class DayTwoChecksumPartTwoTest {
     }
 
     private void checkChecksum(String input, int expectedChecksum) {
-        assertThat(calcChecksum(input), is(expectedChecksum));
+        assertThat(new DayTwoChecksumPartTwo().calcChecksum(input), is(expectedChecksum));
     }
 }
