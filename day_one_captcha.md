@@ -20,7 +20,7 @@ For example:
 91212129 produces 9 because the only digit that matches the next one is the last digit, 9.
 What is the solution to your captcha?
 
---- Part Two ---
+### Part Two ###
 
 You notice a progress bar that jumps to 50% completion. Apparently, the door isn't yet satisfied, but it did emit a star as encouragement. The instructions change:
 
