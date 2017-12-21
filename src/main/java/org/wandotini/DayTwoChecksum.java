@@ -1,30 +1,17 @@
 package org.wandotini;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
-public class DayTwoChecksum {
-    public static int calcChecksum(String input) {
-        return Arrays.stream(input.split("\n"))
-                .mapToInt(DayTwoChecksum::getDifferenceForRow)
-                .sum();
-    }
+public class DayTwoChecksum extends DayTwoChecksumCalculator {
 
-    private static int getDifferenceForRow(String row) {
-        List<Integer> numbers = Arrays.stream(row.split("\t"))
-                .map(Integer::parseInt)
-                .collect(Collectors.toList());
-        return getMaxDifference(numbers);
-    }
-
-    private static int getMaxDifference(List<Integer> numbers) {
-        final MinMax minMax = new MinMax(numbers.get(0));
-        numbers.forEach(minMax::consider);
+    @Override
+    protected int processRow(Integer[] numbers) {
+        final MinMax minMax = new MinMax(numbers[0]);
+        Arrays.stream(numbers).forEach(minMax::consider);
         return minMax.difference();
     }
 
-    private static class MinMax {
+    private class MinMax {
         private int min;
         private int max;
 

@@ -1,26 +1,32 @@
 package org.wandotini;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.wandotini.DayOneCaptchaPartTwo.parse;
 
 public class DayOneCaptchaPartTwoTest {
+    private DayOneCaptchaParser captcha;
+
+    @Before
+    public void setUp() throws Exception {
+        captcha = new DayOneCaptchaPartTwo();
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void zeroLengthStringthrowsIllegalArgumentException() throws Exception {
-        parse("");
+        captcha.parse("");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void nullStringThrowsIllegalArgumentException() throws Exception {
-        parse(null);
+        captcha.parse(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void nonDigitsThrowsIlegalArgumentException() throws Exception {
-        parse("nondigits");
+        captcha.parse("nondigits");
     }
 
     @Test
@@ -79,6 +85,6 @@ public class DayOneCaptchaPartTwoTest {
     }
 
     private void checkCaptcha(String input, int result) {
-        assertThat(parse(input), is(result));
+        assertThat(captcha.parse(input), is(result));
     }
 }
