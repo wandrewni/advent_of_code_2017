@@ -5,19 +5,15 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
-public class DayFourPassphrasesTest {
+public class DayFourPassphrasePartTwoTest {
 
     @Test
     public void oneWordPassphraseIsValid() throws Exception {
@@ -40,14 +36,14 @@ public class DayFourPassphrasesTest {
     }
 
     @Test
-    public void threeWordPassPhraseWithRepeatingWordsIsInvalid() throws Exception {
-        assertInvalid("bb aa aa");
+    public void twoWordPassPhraseWithAnagramsIsInvalid() throws Exception {
+        assertInvalid("ba ab");
     }
 
     @Test
     public void validPassphrasesWithEmptyListIs0() throws Exception {
-        assertThat(DayFourPassphrases.countValidPassphrases(emptyList()), is(0));
-        assertThat(DayFourPassphrases.countValidPassphrases(null), is(0));
+        assertThat(count(emptyList()), is(0));
+        assertThat(count(null), is(0));
     }
 
     @Test
@@ -57,12 +53,12 @@ public class DayFourPassphrasesTest {
 
     @Test
     public void validPassphrasesWithNoValidPassphraseIs() throws Exception {
-        verifyValidCount(0, "aa aa");
+        verifyValidCount(0, "ba ab");
     }
 
     @Test
     public void severalPassphrasesCalculatedCorrectly() throws Exception {
-        verifyValidCount(2, "aa aa", "cc cc", "aa bb cc", "aa dd", "ab cc ab");
+        verifyValidCount(3, "ab ba", "ca cc", "aa bb cc", "aa dd", "ab cc ab");
     }
 
     @Test
@@ -71,18 +67,27 @@ public class DayFourPassphrasesTest {
         String[] passphrases = new BufferedReader(new InputStreamReader(resourceAsStream))
                 .lines()
                 .collect(toList()).toArray(new String[0]);
-        verifyValidCount(386, passphrases);
+        verifyValidCount(208, passphrases);
     }
 
     private void verifyValidCount(int numValid, String... passphrases) {
-        assertThat(DayFourPassphrases.countValidPassphrases(asList(passphrases)), is(numValid));
+        assertThat(count(asList(passphrases)), is(numValid));
     }
+
 
     private void assertValid(String input) {
-        assertThat(DayFourPassphrases.validate(input), is(true));
+        assertThat(validate(input), is(true));
     }
 
+
     private void assertInvalid(String input) {
-        assertThat(DayFourPassphrases.validate(input), is(false));
+        assertThat(validate(input), is(false));
+    }
+
+    private int count(List<String> passphrases) {
+        return new DayFourPassphrasePartTwo().countValidPassphrases(passphrases);
+    }
+    private boolean validate(String input) {
+        return new DayFourPassphrasePartTwo().isValid(input);
     }
 }
