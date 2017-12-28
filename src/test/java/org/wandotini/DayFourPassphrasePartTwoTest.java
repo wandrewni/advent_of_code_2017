@@ -63,7 +63,7 @@ public class DayFourPassphrasePartTwoTest {
 
     @Test
     public void puzzleInputCalculatedCorrectly() throws Exception {
-        InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("day_four_part_one_input.txt");
+        InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("day_four_input.txt");
         String[] passphrases = new BufferedReader(new InputStreamReader(resourceAsStream))
                 .lines()
                 .collect(toList()).toArray(new String[0]);
