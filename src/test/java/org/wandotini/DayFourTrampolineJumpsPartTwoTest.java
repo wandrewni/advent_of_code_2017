@@ -1,6 +1,7 @@
 package org.wandotini;
 
 import org.junit.Test;
+import org.wandotini.utils.TestUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -46,8 +47,7 @@ public class DayFourTrampolineJumpsPartTwoTest {
 
     @Test
     public void puzzleInput() throws Exception {
-        InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("day_five_input.txt");
-        Integer[] jumps = new BufferedReader(new InputStreamReader(resourceAsStream))
+        Integer[] jumps = TestUtils.readFileIntoReader("day_five_input.txt")
                 .lines()
                 .map(Integer::parseInt)
                 .collect(toList())

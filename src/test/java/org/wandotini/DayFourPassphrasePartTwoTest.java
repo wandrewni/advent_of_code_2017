@@ -1,6 +1,7 @@
 package org.wandotini;
 
 import org.junit.Test;
+import org.wandotini.utils.TestUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -63,8 +64,7 @@ public class DayFourPassphrasePartTwoTest {
 
     @Test
     public void puzzleInputCalculatedCorrectly() throws Exception {
-        InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("day_four_input.txt");
-        String[] passphrases = new BufferedReader(new InputStreamReader(resourceAsStream))
+        String[] passphrases = TestUtils.readFileIntoReader("day_four_input.txt")
                 .lines()
                 .collect(toList()).toArray(new String[0]);
         verifyValidCount(208, passphrases);
