@@ -1,5 +1,7 @@
 package org.wandotini;
 
+import java.util.stream.IntStream;
+
 public class DayTenKnotHash {
     private Integer[] hash;
     private int currentPosition = 0;
@@ -8,7 +10,6 @@ public class DayTenKnotHash {
     public DayTenKnotHash(Integer... integers) {
         this.hash = integers;
     }
-
 
     public void twist(LengthsGenerator lengthsGenerator) {
         final Integer[] lengths = lengthsGenerator.buildLengths();
@@ -19,22 +20,19 @@ public class DayTenKnotHash {
     private void twist(int length) {
         if (length > hash.length)
             throw new IllegalArgumentException();
-        if (length > 1)
-            twistHash(length);
+        twistHash(length);
         updateCurrentPosition(length);
     }
 
     private void twistHash(int length) {
-        Integer[] newHash = new Integer[hash.length];
-        for (int i = 0; i < hash.length; i++)
-            newHash[i] = hash[findIndexToSwap(i, length)];
-        hash = newHash;
+        hash = IntStream.range(0, hash.length)
+                .mapToObj(i -> hash[findIndexToSwap(i, length)])
+                .toArray(Integer[]::new);
     }
 
     private void updateCurrentPosition(int length) {
         currentPosition += length + skipSize++;
-        while (currentPosition >= hash.length)
-            currentPosition -= hash.length;
+        currentPosition %= hash.length;
     }
 
     protected int findIndexToSwap(int index, int length) {
