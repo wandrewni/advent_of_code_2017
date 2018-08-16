@@ -1,5 +1,6 @@
 package org.wandotini;
 
+import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 
 public class DayTenKnotHash {
@@ -26,23 +27,29 @@ public class DayTenKnotHash {
 
     private void twistHash(int length) {
         hash = IntStream.range(0, hash.length)
-                .mapToObj(i -> hash[findIndexToSwap(i, length)])
+                .mapToObj(findSwapValue(length))
                 .toArray(Integer[]::new);
+    }
+
+    private IntFunction<Integer> findSwapValue(int length) {
+        return i -> hash[findIndexToSwap(i, length)];
     }
 
     private void updateCurrentPosition(int length) {
         currentPosition += length + skipSize++;
-        currentPosition %= hash.length;
+        currentPosition = retractToWithinHashBounds(currentPosition);
     }
 
-    protected int findIndexToSwap(int index, int length) {
+    protected int findIndexToSwap(int initialIndex, int length) {
         final int twistEndIndex = currentPosition + length;
-        if (indexFallsOutsideOfTwist(index, twistEndIndex))
-            return index;
-        int swap = twistEndIndex - (index - currentPosition) - 1;
-        while (swap >= hash.length)
-            swap -= hash.length;
-        return swap;
+        if (indexFallsOutsideOfTwist(initialIndex, twistEndIndex))
+            return initialIndex;
+        int swapIndex = twistEndIndex - (initialIndex - currentPosition) - 1;
+        return retractToWithinHashBounds(swapIndex);
+    }
+
+    private int retractToWithinHashBounds(int index) {
+        return index % hash.length;
     }
 
     private boolean indexFallsOutsideOfTwist(int index, int twistEndIndex) {
