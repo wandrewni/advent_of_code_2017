@@ -9,7 +9,14 @@ public class DayTenKnotHash {
         this.hash = integers;
     }
 
-    public void twist(int length) {
+
+    public void twist(LengthsGenerator lengthsGenerator) {
+        final Integer[] lengths = lengthsGenerator.buildLengths();
+        for (Integer length : lengths)
+            twist(length);
+    }
+
+    private void twist(int length) {
         if (length > hash.length)
             throw new IllegalArgumentException();
         if (length > 1)
@@ -53,5 +60,33 @@ public class DayTenKnotHash {
 
     public void setCurrentPosition(int currentPosition) {
         this.currentPosition = currentPosition;
+    }
+
+    public interface LengthsGenerator {
+        Integer[] buildLengths();
+    }
+
+    public static class AsciiLengthsGenerator implements LengthsGenerator {
+        private final String input;
+
+        public AsciiLengthsGenerator(String input) {
+            this.input = input;
+        }
+
+        public Integer[] buildLengths() {
+            return input.chars().boxed().toArray(Integer[]::new);
+        }
+    }
+
+    public static class IntegerLengthsGenerator implements LengthsGenerator {
+        private final Integer[] input;
+
+        public IntegerLengthsGenerator(Integer... input) {
+            this.input = input;
+        }
+
+        public Integer[] buildLengths() {
+            return input;
+        }
     }
 }
