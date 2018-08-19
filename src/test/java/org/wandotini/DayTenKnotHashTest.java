@@ -2,12 +2,15 @@ package org.wandotini;
 
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class DayTenKnotHashTest {
-    private static final Integer[] PUZZLE_INPUT = {94, 84, 0, 79, 2, 27, 81, 1, 123, 93, 218, 23, 103, 255, 254, 243};
-    private DayTenKnotHash knotHash;
+    private static final String PUZZLE_INPUT = "94,84,0,79,2,27,81,1,123,93,218,23,103,255,254,243";
+    DayTenKnotHash knotHash;
 
     @Test
     public void beforeTwistingHashIsInputHash() throws Exception {
@@ -139,25 +142,26 @@ public class DayTenKnotHashTest {
 
     @Test
     public void puzzleInput() throws Exception {
-        Integer[] initialValues = new Integer[256];
-        for (int i = 0; i < 256; i++)
-            initialValues[i] = i;
+        Integer[] initialValues = IntStream.range(0, 256).boxed().toArray(Integer[]::new);
         createHash(initialValues);
 
-        twist(PUZZLE_INPUT);
+        final Integer[] puzzleInputAsIntegers = Arrays.stream(PUZZLE_INPUT.split(","))
+                .map(Integer::parseInt)
+                .toArray(Integer[]::new);
+        twist(puzzleInputAsIntegers);
 
         assertEquals(23715, knotHash.getHash()[0] * knotHash.getHash()[1]);
     }
 
-    private void createHash(Integer... hashValues) {
+    void createHash(Integer... hashValues) {
         knotHash = new DayTenKnotHash(hashValues);
     }
 
-    private void twist(Integer... lengths) {
+    void twist(Integer... lengths) {
         knotHash.twist(new DayTenKnotHash.IntegerLengthsGenerator(lengths));
     }
 
-    private void verifyHash(Integer... expectedHashValues) {
+    void verifyHash(Integer... expectedHashValues) {
         assertArrayEquals(expectedHashValues, knotHash.getHash());
     }
 }

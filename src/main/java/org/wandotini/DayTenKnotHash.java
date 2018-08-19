@@ -1,21 +1,27 @@
 package org.wandotini;
 
+import java.util.Arrays;
 import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class DayTenKnotHash {
     private Integer[] hash;
     private int currentPosition = 0;
     private int skipSize = 0;
+    private int repititions = 1;
+    private HashDensifier hashDensifier = hash -> hash;
 
     public DayTenKnotHash(Integer... integers) {
         this.hash = integers;
     }
 
     public void twist(LengthsGenerator lengthsGenerator) {
-        final Integer[] lengths = lengthsGenerator.buildLengths();
-        for (Integer length : lengths)
-            twist(length);
+        for (int i = 0; i < repititions; i++)
+            for (Integer length : lengthsGenerator.buildLengths())
+                twist(length);
+        hash = hashDensifier.densify(hash);
     }
 
     private void twist(int length) {
@@ -67,8 +73,31 @@ public class DayTenKnotHash {
         this.currentPosition = currentPosition;
     }
 
+    public void setRepititions(int repititions) {
+        this.repititions = repititions;
+    }
+
+    public void setDensifier(HashDensifier densifier) {
+        this.hashDensifier = densifier;
+    }
+
+    public String toHashString() {
+        return Arrays.stream(hash)
+                .map(this::convert)
+                .collect(Collectors.joining());
+    }
+
+    private String convert(int input) {
+        final String hexString = Integer.toHexString(input);
+        return hexString.length() == 1 ? "0" + hexString : hexString;
+    }
+
     public interface LengthsGenerator {
         Integer[] buildLengths();
+    }
+
+    public interface HashDensifier {
+        Integer[] densify(Integer[] hash);
     }
 
     public static class AsciiLengthsGenerator implements LengthsGenerator {
@@ -93,5 +122,37 @@ public class DayTenKnotHash {
         public Integer[] buildLengths() {
             return input;
         }
+    }
+
+    public static class AsciiLengthsGeneratorWithSuffix extends AsciiLengthsGenerator {
+        public AsciiLengthsGeneratorWithSuffix(String input) {
+            super(input);
+        }
+
+        public Integer[] buildLengths() {
+            final Stream<Integer> translatedInput = Arrays.stream(super.buildLengths());
+            final Stream<Integer> standardSuffix = Arrays.stream(new Integer[]{17, 31, 73, 47, 23});
+            return Stream.concat(translatedInput, standardSuffix)
+                    .toArray(Integer[]::new);
+        }
+    }
+
+    public static class BitWiseOrDensifier implements HashDensifier{
+        public Integer[] densify(Integer[] hash) throws IllegalStateException {
+            return toStreamBlocks(hash, 16)
+                    .map(this::bitwiseOr)
+                    .toArray(Integer[]::new);
+        }
+
+        private Stream<Stream<Integer>> toStreamBlocks(Integer[] input, int blockLimit) {
+            return IntStream.range(0, input.length / blockLimit)
+                    .mapToObj(i -> Arrays.stream(input, i * blockLimit, (i + 1) * blockLimit));
+        }
+
+        private Integer bitwiseOr(Stream<Integer> intBlock) {
+            return intBlock.reduce((previous, current) -> previous ^ current)
+            .orElseThrow(() -> new IllegalAccessError("Input hash length must be multiple of 16"));
+        }
+
     }
 }
