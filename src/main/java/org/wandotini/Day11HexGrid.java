@@ -73,10 +73,6 @@ public class Day11HexGrid {
             return direction.toString().toLowerCase();
         }
 
-        public Direction getDirection() {
-            return direction;
-        }
-
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -102,27 +98,13 @@ public class Day11HexGrid {
 
         public abstract void addDirectionCondensingPairs(List<PathStep> finalPath);
 
-        void replace(List<PathStep> finalPath, Direction toRemove, Direction toAdd) {
-            finalPath.remove(PathStep.of(toRemove));
-            finalPath.add(PathStep.of(toAdd));
-        }
-
-        void condenseIfPossible(List<PathStep> finalPath, Direction condensablePartner, Direction condensableTo) {
-            if (finalPath.contains(of(condensablePartner)))
-                replace(finalPath, condensablePartner, condensableTo);
-            else
-                finalPath.add(this);
-        }
-
-        void condenseWithTwoPossibilities(List<PathStep> finalPath,
-                                          Direction condensingPair1, Direction condensableToOne,
-                                          Direction condensingPartnerTwo, Direction condensableToTwo) {
-            if (finalPath.contains(of(condensingPair1)))
-                replace(finalPath, condensingPair1, condensableToOne);
-            else if (finalPath.contains(of(condensingPartnerTwo)))
-                replace(finalPath, condensingPartnerTwo, condensableToTwo);
-            else
-                finalPath.add(this);
+        void condenseIfPossible(List<PathStep> finalPath, CondensablePair ... condensablePairs) {
+            for (CondensablePair condensablePair : condensablePairs)
+                if (condensablePair.canCondense(finalPath)) {
+                    condensablePair.condense(finalPath);
+                    return;
+                }
+            finalPath.add(this);
         }
 
         private static class Northeast extends PathStep {
@@ -137,7 +119,7 @@ public class Day11HexGrid {
 
             @Override
             public void addDirectionCondensingPairs(List<PathStep> finalPath) {
-                condenseIfPossible(finalPath, S, SE);
+                condenseIfPossible(finalPath, new CondensablePair(S, SE));
             }
 
         }
@@ -154,7 +136,7 @@ public class Day11HexGrid {
 
             @Override
             public void addDirectionCondensingPairs(List<PathStep> finalPath) {
-                condenseIfPossible(finalPath, S, SW);
+                condenseIfPossible(finalPath, new CondensablePair(S, SW));
             }
         }
 
@@ -170,7 +152,7 @@ public class Day11HexGrid {
 
             @Override
             public void addDirectionCondensingPairs(List<PathStep> finalPath) {
-                condenseWithTwoPossibilities(finalPath, SW, NW, SE, NE);
+                condenseIfPossible(finalPath, new CondensablePair(SW, NW), new CondensablePair(SE, NE));
             }
 
         }
@@ -187,7 +169,7 @@ public class Day11HexGrid {
 
             @Override
             public void addDirectionCondensingPairs(List<PathStep> finalPath) {
-                condenseIfPossible(finalPath, N, NW);
+                condenseIfPossible(finalPath, new CondensablePair(N, NW));
             }
         }
 
@@ -203,7 +185,7 @@ public class Day11HexGrid {
 
             @Override
             public void addDirectionCondensingPairs(List<PathStep> finalPath) {
-                condenseWithTwoPossibilities(finalPath, NW, SW, NE, SE);
+                condenseIfPossible(finalPath, new CondensablePair(NW, SW), new CondensablePair(NE, SE));
             }
         }
 
@@ -219,12 +201,39 @@ public class Day11HexGrid {
 
             @Override
             public void addDirectionCondensingPairs(List<PathStep> finalPath) {
-                condenseIfPossible(finalPath, N, NE);
+                condenseIfPossible(finalPath, new CondensablePair(N, NE));
             }
         }
     }
 
     enum Direction {
         NW, N, NE, SW, S, SE
+    }
+
+    public static class CondensablePair {
+        private final Direction condensableWith;
+        private final Direction condensableTo;
+
+        public CondensablePair(Direction condensableWith, Direction condensableTo) {
+            this.condensableWith = condensableWith;
+            this.condensableTo = condensableTo;
+        }
+
+        public Direction getCondensableWith() {
+            return condensableWith;
+        }
+
+        public Direction getCondensableTo() {
+            return condensableTo;
+        }
+
+        boolean canCondense(List<PathStep> finalPath) {
+            return finalPath.contains(PathStep.of(getCondensableWith()));
+        }
+
+        void condense(List<PathStep> finalPath) {
+            finalPath.remove(PathStep.of(getCondensableWith()));
+            finalPath.add(PathStep.of(getCondensableTo()));
+        }
     }
 }
