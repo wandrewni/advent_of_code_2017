@@ -12,22 +12,28 @@ import static org.wandotini.Day11HexGrid.Direction.*;
 
 public class Day11HexGrid {
     public List<String> condensePath(String... path) {
-        return new PathCondenser(path).buildPath();
+        final List<PathStep> condensedPath = new PathCondenser(path).buildPath();
+        return condensedPath.stream()
+                .map(PathStep::toString)
+                .collect(Collectors.toList());
+    }
+
+    enum Direction {
+        NW, N, NE, SW, S, SE
     }
 
     private class PathCondenser {
         private List<PathStep> path;
-
         PathCondenser(String... path) {
             this.path = Stream.of(path)
                     .map(Day11HexGrid.PathStep::parse)
                     .collect(Collectors.toList());
         }
 
-        List<String> buildPath() {
+        List<PathStep> buildPath() {
             removeOpposites();
             consolidateDiagonalVerticalPairs();
-            return path.stream().map(PathStep::toString).collect(Collectors.toList());
+            return path;
         }
 
         private void removeOpposites() {
@@ -96,16 +102,20 @@ public class Day11HexGrid {
 
         protected abstract Direction getOpposite();
 
-        public abstract void addDirectionCondensingPairs(List<PathStep> finalPath);
+        public void addDirectionCondensingPairs(List<PathStep> finalPath) {
+            condenseIfPossible(finalPath, getCondensablePairs());
+        }
 
-        void condenseIfPossible(List<PathStep> finalPath, CondensablePair ... condensablePairs) {
-            for (CondensablePair condensablePair : condensablePairs)
+        void condenseIfPossible(List<PathStep> finalPath, CondensablePair... possibleCondensings) {
+            for (CondensablePair condensablePair : possibleCondensings)
                 if (condensablePair.canCondense(finalPath)) {
                     condensablePair.condense(finalPath);
                     return;
                 }
             finalPath.add(this);
         }
+
+        abstract CondensablePair[] getCondensablePairs();
 
         private static class Northeast extends PathStep {
             public Northeast() {
@@ -117,9 +127,8 @@ public class Day11HexGrid {
                 return SW;
             }
 
-            @Override
-            public void addDirectionCondensingPairs(List<PathStep> finalPath) {
-                condenseIfPossible(finalPath, new CondensablePair(S, SE));
+            CondensablePair[] getCondensablePairs() {
+                return new CondensablePair[]{new CondensablePair(S, SE)};
             }
 
         }
@@ -134,9 +143,8 @@ public class Day11HexGrid {
                 return SE;
             }
 
-            @Override
-            public void addDirectionCondensingPairs(List<PathStep> finalPath) {
-                condenseIfPossible(finalPath, new CondensablePair(S, SW));
+            CondensablePair[] getCondensablePairs() {
+                return new CondensablePair[]{new CondensablePair(S, SW)};
             }
         }
 
@@ -150,9 +158,8 @@ public class Day11HexGrid {
                 return S;
             }
 
-            @Override
-            public void addDirectionCondensingPairs(List<PathStep> finalPath) {
-                condenseIfPossible(finalPath, new CondensablePair(SW, NW), new CondensablePair(SE, NE));
+            CondensablePair[] getCondensablePairs() {
+                return new CondensablePair[]{new CondensablePair(SW, NW), new CondensablePair(SE, NE)};
             }
 
         }
@@ -167,9 +174,8 @@ public class Day11HexGrid {
                 return NE;
             }
 
-            @Override
-            public void addDirectionCondensingPairs(List<PathStep> finalPath) {
-                condenseIfPossible(finalPath, new CondensablePair(N, NW));
+            CondensablePair[] getCondensablePairs() {
+                return new CondensablePair[]{new CondensablePair(N, NW)};
             }
         }
 
@@ -184,8 +190,8 @@ public class Day11HexGrid {
             }
 
             @Override
-            public void addDirectionCondensingPairs(List<PathStep> finalPath) {
-                condenseIfPossible(finalPath, new CondensablePair(NW, SW), new CondensablePair(NE, SE));
+            protected CondensablePair[] getCondensablePairs() {
+                return new CondensablePair[]{new CondensablePair(NW, SW), new CondensablePair(NE, SE)};
             }
         }
 
@@ -199,15 +205,10 @@ public class Day11HexGrid {
                 return NW;
             }
 
-            @Override
-            public void addDirectionCondensingPairs(List<PathStep> finalPath) {
-                condenseIfPossible(finalPath, new CondensablePair(N, NE));
+            CondensablePair[] getCondensablePairs() {
+                return new CondensablePair[]{new CondensablePair(N, NE)};
             }
         }
-    }
-
-    enum Direction {
-        NW, N, NE, SW, S, SE
     }
 
     public static class CondensablePair {
