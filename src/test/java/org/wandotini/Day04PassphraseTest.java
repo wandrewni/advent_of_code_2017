@@ -1,7 +1,7 @@
 package org.wandotini;
 
 import org.junit.Test;
-import org.wandotini.utils.TestUtils;
+import org.wandotini.util.TestUtils;
 
 import java.util.List;
 
@@ -62,7 +62,7 @@ public class Day04PassphraseTest {
 
     @Test
     public void puzzleInputCalculatedCorrectly() throws Exception {
-        String[] passphrases = TestUtils.readFileIntoReader("day_four_input.txt")
+        String[] passphrases = TestUtils.readFileIntoReader("day_04_input.txt")
                 .lines()
                 .collect(toList()).toArray(new String[0]);
         verifyValidCount(386, passphrases);

@@ -1,4 +1,4 @@
-package org.wandotini.utils;
+package org.wandotini.util;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

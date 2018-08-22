@@ -2,9 +2,12 @@ package org.wandotini;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.wandotini.util.TestUtils;
 
-import static org.hamcrest.Matchers.emptyIterable;
-import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
+import java.io.BufferedReader;
+import java.util.List;
+
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -79,13 +82,30 @@ public class Day11HexGridTest {
         verifyCondensedPath(path(NW, SE, NW, SE, N), path(N));
     }
 
+    @Test
+    public void handlesDiagonalsCombinedWithVerticals() throws Exception {
+        verifyCondensedPath(path(SW, N, N, SW), path(NW, NW));
+        verifyCondensedPath(path(SE, N, N, SE), path(NE, NE));
+        verifyCondensedPath(path(NW, S, S, NW), path(SW, SW));
+        verifyCondensedPath(path(NE, S, S, NE), path(SE, SE));
+    }
+
+    @Test
+    public void puzzleInput() throws Exception {
+        final BufferedReader bufferedReader = TestUtils.readFileIntoReader("day_11_input.txt");
+        String input = bufferedReader.readLine();
+        final String[] inputPath = input.split(",");
+        final List<String> condensedPath = grid.condensePath(inputPath);
+        System.out.println(condensedPath);
+        assertThat(condensedPath, is(iterableWithSize(794)));
+    }
 
     private String[] path(String ... path) {
         return path;
     }
 
     private void verifyCondensedPath(String[] input, String[] expected) {
-        assertThat(grid.condensePath(input), contains(expected));
+        assertThat(grid.condensePath(input), containsInAnyOrder(expected));
     }
 
     private void verifyPathResultsBackAtStart(String... path) {

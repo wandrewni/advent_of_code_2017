@@ -1,7 +1,7 @@
 package org.wandotini;
 
 import org.junit.Test;
-import org.wandotini.utils.TestUtils;
+import org.wandotini.util.TestUtils;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.core.Is.is;
@@ -43,7 +43,7 @@ public class Day05TrampolineJumpsPartTwoTest {
 
     @Test
     public void puzzleInput() throws Exception {
-        Integer[] jumps = TestUtils.readFileIntoReader("day_five_input.txt")
+        Integer[] jumps = TestUtils.readFileIntoReader("day_05_input.txt")
                 .lines()
                 .map(Integer::parseInt)
                 .collect(toList())

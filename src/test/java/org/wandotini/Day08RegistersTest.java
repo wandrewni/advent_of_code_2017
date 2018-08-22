@@ -1,7 +1,7 @@
 package org.wandotini;
 
 import org.junit.Test;
-import org.wandotini.utils.TestUtils;
+import org.wandotini.util.TestUtils;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
@@ -153,7 +153,7 @@ public class Day08RegistersTest {
 
     @Test
     public void puzzleInput_largestValue() throws Exception {
-        final String[] input = TestUtils.readFileIntoReader("day_eight_input.txt").lines().toArray(String[]::new);
+        final String[] input = TestUtils.readFileIntoReader("day_08_input.txt").lines().toArray(String[]::new);
 
         registers = processInstructions(input);
 
@@ -162,7 +162,7 @@ public class Day08RegistersTest {
 
     @Test
     public void puzzleInput_maxValueSeen() throws Exception {
-        final String[] input = TestUtils.readFileIntoReader("day_eight_input.txt").lines().toArray(String[]::new);
+        final String[] input = TestUtils.readFileIntoReader("day_08_input.txt").lines().toArray(String[]::new);
 
         registers = processInstructions(input);
 

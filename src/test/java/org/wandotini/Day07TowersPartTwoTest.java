@@ -1,7 +1,7 @@
 package org.wandotini;
 
 import org.junit.Test;
-import org.wandotini.utils.TestUtils;
+import org.wandotini.util.TestUtils;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -120,7 +120,7 @@ public class Day07TowersPartTwoTest {
 
     @Test
     public void puzzleInput() throws Exception {
-        String[] input = TestUtils.readFileIntoReader("day_seven_input.txt")
+        String[] input = TestUtils.readFileIntoReader("day_07_input.txt")
                 .lines()
                 .map(line -> line.replace("\n",""))
                 .toArray(String[]::new);
