@@ -19,11 +19,11 @@ public class Day11HexGridTest {
     private static final String SW = "sw";
     private static final String NE = "ne";
     private static final String NW = "nw";
-    private Day11HexGrid grid;
+    protected Day11HexGrid grid;
 
     @Before
     public void setUp() throws Exception {
-        grid = new Day11HexGrid();
+        grid = new Day11HexGridPostReducer();
     }
 
     @Test
