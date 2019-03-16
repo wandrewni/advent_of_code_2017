@@ -235,7 +235,7 @@ public class Day13PacketScannersTest {
     public void puzzleDayTwo() {
         System.out.println(new Date());
         packetScanners = puzzleInputScanners();
-        assertThat(packetScanners.minimumSafeDelay(), is(10));
+        assertThat(packetScanners.minimumSafeDelay(), is(3964778)); // 3h29m49s891ms
         System.out.println(new Date());
     }
 
