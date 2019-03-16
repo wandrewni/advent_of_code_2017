@@ -1,10 +1,10 @@
 package org.wandotini;
 
 import org.junit.Test;
+import org.wandotini.util.TestUtils;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.wandotini.util.TestUtils.readFileIntoReader;
 
 public class Day07TowersTest {
 
@@ -36,9 +36,7 @@ public class Day07TowersTest {
 
     @Test
     public void puzzleInput() throws Exception {
-        String[] input = readFileIntoReader("day_07_input.txt")
-                .lines()
-                .map(line -> line.replace("\n",""))
+        String[] input = TestUtils.readFileIntoLines("day_07_input.txt")
                 .toArray(String[]::new);
         assertThat(Day07Towers.getRoot(input), is("ahnofa"));
     }
