@@ -78,6 +78,25 @@ public class Day13PacketScanners {
             tick();
     }
 
+    public List<Integer> someSafeDelays(int desiredValues) {
+        List<Integer> safeDelays = new ArrayList<>();
+        for (int i = 0; safeDelays.size() < desiredValues; i++) {
+            if (delaySafe(i)) safeDelays.add(i);
+        }
+        return safeDelays;
+    }
+
+    private boolean delaySafe(int i) {
+        for (Layer layer : layers) {
+            if (layer.range != 0) {
+                final int magicNumber = 2 * layer.range - 2;
+                if ((i + layer.depth) % magicNumber == 0)
+                    return false;
+            }
+        }
+        return true;
+    }
+
     @ToString
     @EqualsAndHashCode
     public static class Layer {

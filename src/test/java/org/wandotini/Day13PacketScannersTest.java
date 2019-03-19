@@ -231,12 +231,58 @@ public class Day13PacketScannersTest {
         assertThat(packetScanners.minimumSafeDelay(), is(10));
     }
 
-    @Test @Ignore
+    @Test
+    public void minimumSafeDelayTwo_forVerySimpleLayout() {
+        packetScanners = scanner(layer(0, 0));
+        assertThat(packetScanners.someSafeDelays(3), containsInAnyOrder(0, 1, 2));
+    }
+
+    @Test
+    public void minimumSafeDelayTwo_forSingleRange() {
+        packetScanners = scanner(layer(0, 3));
+        assertThat(packetScanners.someSafeDelays(3), containsInAnyOrder(1, 2, 3));
+        assertThat(packetScanners.someSafeDelays(4), containsInAnyOrder(1, 2, 3, 5));
+        assertThat(packetScanners.someSafeDelays(8), containsInAnyOrder(1, 2, 3, 5, 6, 7, 9, 10));
+    }
+
+    @Test
+    public void safeDelaysForSingleLargerRange() {
+        packetScanners = scanner(layer(0, 2));
+        assertThat(packetScanners.someSafeDelays(2), containsInAnyOrder(1, 3));
+        assertThat(packetScanners.someSafeDelays(3), containsInAnyOrder(1, 3, 5));
+        assertThat(packetScanners.someSafeDelays(5), containsInAnyOrder(1, 3, 5, 7, 9));
+    }
+
+    @Test
+    public void safeDelaysForSingleLargerRange_secondRange() {
+        packetScanners = scanner(layer(1, 2));
+        assertThat(packetScanners.someSafeDelays(2), containsInAnyOrder(0, 2));
+        assertThat(packetScanners.someSafeDelays(3), containsInAnyOrder(0, 2, 4));
+        assertThat(packetScanners.someSafeDelays(5), containsInAnyOrder(0, 2, 4, 6, 8));
+    }
+
+    @Test
+    public void someSafeDelays_forSecondDepthRange() {
+        packetScanners = scanner(layer(1, 3));
+        assertThat(packetScanners.someSafeDelays(4), containsInAnyOrder(0, 1, 2, 4));
+    }
+
+    @Test
+    public void delayExampleUsingNewAlgorithm() {
+        packetScanners = scanner(
+                layer(0, 3),
+                layer(1, 2),
+                layer(4, 4),
+                layer(6, 4)
+        );
+
+        assertThat(packetScanners.someSafeDelays(1), contains(10));
+    }
+
+    @Test
     public void puzzleDayTwo() {
-        System.out.println(new Date());
         packetScanners = puzzleInputScanners();
-        assertThat(packetScanners.minimumSafeDelay(), is(3964778)); // 3h29m49s891ms
-        System.out.println(new Date());
+        assertThat(packetScanners.someSafeDelays(1), contains(3964778)); // 3h29m49s891ms
     }
 
     @Test
