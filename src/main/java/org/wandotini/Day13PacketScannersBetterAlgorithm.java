@@ -9,14 +9,13 @@ import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 
-public class Day13PacketScanners {
+public class Day13PacketScannersBetterAlgorithm {
     private List<Layer> layers;
     private int packetPosition = -1;
     private int severityRaised;
     private final int maxDepth;
-    private int numTicks;
 
-    public Day13PacketScanners(Layer... layers) {
+    public Day13PacketScannersBetterAlgorithm(Layer... layers) {
         if (layers.length == 0) throw new IllegalStateException();
         Map<Integer, Layer> layerMap = new HashMap<>();
         Arrays.stream(layers).forEach(layer -> layerMap.put(layer.getDepth(), layer));
@@ -44,11 +43,6 @@ public class Day13PacketScanners {
         layers = layers.stream().map(Layer::tick).collect(toList());
     }
 
-    private void tickSimulate() {
-        numTicks++;
-        layers = layers.stream().map(Layer::tick).collect(toList());
-    }
-
     public int getSeverityRaised() {
         return severityRaised;
     }
@@ -57,15 +51,26 @@ public class Day13PacketScanners {
         return packetPosition == maxDepth;
     }
 
-    public int minimumSafeDelay() {
-        while(layers.stream().anyMatch(layer -> !layer.isSafe(numTicks)))
-            tickSimulate();
-        return numTicks;
+    void tick(int numTicks) {
+        IntStream.range(0, numTicks)
+                .forEach(i -> tick());
     }
 
-    void tick(int numTicks) {
-        for (int i = 0; i < numTicks; i++)
-            tick();
+    public List<Integer> someSafeDelays(int desiredValues) {
+        List<Integer> safeDelays = new ArrayList<>();
+        for (int delay = 0; safeDelays.size() < desiredValues; delay++)
+            if (delaySafe(delay))
+                safeDelays.add(delay);
+        return safeDelays;
+    }
+
+    private boolean delaySafe(int delay) {
+        return layers.stream().noneMatch(layer -> delayWillHitSentry(delay, layer));
+    }
+
+    private boolean delayWillHitSentry(int delay, Layer layer) {
+        final boolean unsafe = layer.sentryPresentAtTime(delay + layer.depth);
+        return layer.hasSentry() && unsafe;
     }
 
     @ToString
@@ -135,12 +140,13 @@ public class Day13PacketScanners {
                     : 0;
         }
 
-        public boolean isSafe(int delay) {
-            if (range == 0) return true;
-            Layer testLayer = new Layer(depth, range);
-            for (int i = 0; i < depth + delay; i++)
-                testLayer = testLayer.tick();
-            return testLayer.getSentryPosition() != 0;
+        private boolean hasSentry() {
+            return range != 0;
+        }
+
+        private boolean sentryPresentAtTime(int time) {
+            final int sentryCycleLength = 2 * (range - 1);
+            return time % sentryCycleLength == 0;
         }
     }
 }

@@ -1,16 +1,16 @@
 package org.wandotini;
 
-import org.junit.Ignore;
+import lombok.ToString;
 import org.junit.Test;
-import org.wandotini.Day13PacketScanners.Layer;
+import org.wandotini.Day13PacketScannersBetterAlgorithm.Layer;
 import org.wandotini.util.TestUtils;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-public class Day13PacketScannersTest {
+public class Day13PacketScannersBetterAlgorithmTest {
 
-    private Day13PacketScanners packetScanners;
+    private Day13PacketScannersBetterAlgorithm packetScanners;
 
     @Test(expected = IllegalStateException.class)
     public void degenerateTests() {
@@ -176,7 +176,7 @@ public class Day13PacketScannersTest {
         assertThat(packetScanners.getSeverityRaised(), is(1876));
     }
 
-    private Day13PacketScanners puzzleInputScanners() {
+    private Day13PacketScannersBetterAlgorithm puzzleInputScanners() {
         Layer[] layers = TestUtils.readFileIntoLines("day_13_input.txt")
                 .map(Layer::fromString)
                 .toArray(Layer[]::new);
@@ -184,41 +184,43 @@ public class Day13PacketScannersTest {
     }
 
     @Test
-    public void layerSafeWhenEmpty() {
-        assertTrue(layer(0, 0).isSafe(0));
-    }
-
-    @Test
-    public void whenSentryInPositionZeroAndsFirstLayerItIsNotSafe() {
-        assertFalse(layer(0, 1).isSafe(0));
-    }
-
-    @Test
-    public void whenSentryWillBeZeroByTheTimePacketReachesItIsNotSafe() {
-        assertFalse(layer(2, 2).isSafe(0));
-    }
-
-    @Test
-    public void whenSentryWillBeZeroByTheTimePacketReachesAfterDelayItIsSafe() {
-        assertTrue(layer(2, 2).isSafe(1));
-    }
-
-    @Test
-    public void safePathWithNoSentriesIsZero() {
+    public void minimumSafeDelayTwo_forVerySimpleLayout() {
         packetScanners = scanner(layer(0, 0));
-
-        assertThat(packetScanners.minimumSafeDelay(), is(0));
+        assertThat(packetScanners.someSafeDelays(3), containsInAnyOrder(0, 1, 2));
     }
 
     @Test
-    public void safePathWithSentryInFirstPositionIsOne() {
+    public void minimumSafeDelayTwo_forSingleRange() {
+        packetScanners = scanner(layer(0, 3));
+        assertThat(packetScanners.someSafeDelays(3), containsInAnyOrder(1, 2, 3));
+        assertThat(packetScanners.someSafeDelays(4), containsInAnyOrder(1, 2, 3, 5));
+        assertThat(packetScanners.someSafeDelays(8), containsInAnyOrder(1, 2, 3, 5, 6, 7, 9, 10));
+    }
+
+    @Test
+    public void safeDelaysForSingleLargerRange() {
         packetScanners = scanner(layer(0, 2));
-
-        assertThat(packetScanners.minimumSafeDelay(), is(1));
+        assertThat(packetScanners.someSafeDelays(2), containsInAnyOrder(1, 3));
+        assertThat(packetScanners.someSafeDelays(3), containsInAnyOrder(1, 3, 5));
+        assertThat(packetScanners.someSafeDelays(5), containsInAnyOrder(1, 3, 5, 7, 9));
     }
 
     @Test
-    public void delayExample() {
+    public void safeDelaysForSingleLargerRange_secondRange() {
+        packetScanners = scanner(layer(1, 2));
+        assertThat(packetScanners.someSafeDelays(2), containsInAnyOrder(0, 2));
+        assertThat(packetScanners.someSafeDelays(3), containsInAnyOrder(0, 2, 4));
+        assertThat(packetScanners.someSafeDelays(5), containsInAnyOrder(0, 2, 4, 6, 8));
+    }
+
+    @Test
+    public void someSafeDelays_forSecondDepthRange() {
+        packetScanners = scanner(layer(1, 3));
+        assertThat(packetScanners.someSafeDelays(4), containsInAnyOrder(0, 1, 2, 4));
+    }
+
+    @Test
+    public void delayExampleUsingNewAlgorithm() {
         packetScanners = scanner(
                 layer(0, 3),
                 layer(1, 2),
@@ -226,13 +228,7 @@ public class Day13PacketScannersTest {
                 layer(6, 4)
         );
 
-        assertThat(packetScanners.minimumSafeDelay(), is(10));
-    }
-
-    @Test @Ignore // takes 3.5 hours
-    public void puzzleDayTwo() {
-        packetScanners = puzzleInputScanners();
-        assertThat(packetScanners.minimumSafeDelay(), is(3964778)); // 3h29m49s891ms
+        assertThat(packetScanners.someSafeDelays(1), contains(10));
     }
 
     @Test
@@ -242,12 +238,18 @@ public class Day13PacketScannersTest {
         assertThat(layer.getRange(), is(3));
     }
 
+    @Test
+    public void puzzleDayTwo() {
+        packetScanners = puzzleInputScanners();
+        assertThat(packetScanners.someSafeDelays(1), contains(3964778)); // 352 ms
+    }
+
     private Layer layer(int depth, int range) {
         return Layer.of(depth, range);
     }
 
-    private Day13PacketScanners scanner(Layer... layers) {
-        return new Day13PacketScanners(layers);
+    private Day13PacketScannersBetterAlgorithm scanner(Layer... layers) {
+        return new Day13PacketScannersBetterAlgorithm(layers);
     }
 
 }
